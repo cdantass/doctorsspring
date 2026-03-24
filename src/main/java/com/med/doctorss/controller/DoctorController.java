@@ -6,8 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
 
@@ -20,25 +22,37 @@ public class DoctorController {
 
     @PostMapping
     @Transactional
-    public void register(@RequestBody DataRegisterDoc data) {
+    public ResponseEntity register(@RequestBody DataRegisterDoc data, UriComponentsBuilder uriComponentsBuilder) {
+        var doctor = new Doctor(data);
         repository.save(new Doctor(data));
+
+        var uri = uriComponentsBuilder.path("/doctors/{id}").buildAndExpand(doctor.getId()).toUri();
+
+        return ResponseEntity.created(uri).body(new DataDetalheDoctor(doctor));
     }
+
+
     @GetMapping
-    public Page<DataListDoctors> listar(@PageableDefault(size = 10, sort = {"nome"}) Pageable paginacao){
-        return repository.findAllByActiveTrue(paginacao).map(DataListDoctors::new);
+    public ResponseEntity<Page<DataListDoctors>> listar(@PageableDefault(size = 10, sort = {"nome"}) Pageable paginacao){
+        var page = repository.findAllByActiveTrue(paginacao).map(DataListDoctors::new);
+        return ResponseEntity.ok(page);
     }
 
     @PutMapping
     @Transactional
-    public void update(@RequestBody @Valid DataUpdateDoctor dataupdate){
+    public ResponseEntity update(@RequestBody @Valid DataUpdateDoctor dataupdate){
         var doctor = repository.getReferenceById(dataupdate.id());
         doctor.updateInfo(dataupdate);
+
+        return ResponseEntity.ok(new DataDetalheDoctor(doctor));
     }
 
     @DeleteMapping("/{id}")
     @Transactional
-    public void delete(@PathVariable Long id){
+    public ResponseEntity delete(@PathVariable Long id){
         var doctor = repository.getReferenceById(id);
         doctor.delete();
+
+        return ResponseEntity.noContent().build();
     }
 }
