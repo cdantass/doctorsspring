@@ -1,7 +1,7 @@
 package com.med.doctorss.controller;
 
 
-import com.med.doctorss.pacient.*;
+import com.med.doctorss.entity.pacient.*;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -51,5 +51,10 @@ public class PacientController {
         pacient.delete();
 
         return ResponseEntity.noContent().build();
+    }
+    @GetMapping("/{id}")
+    public ResponseEntity detalhar(@PathVariable Long id){
+        var pacient = repository.getReferenceById(id);
+        return ResponseEntity.ok(new DataDetalhePacient(pacient));
     }
 }

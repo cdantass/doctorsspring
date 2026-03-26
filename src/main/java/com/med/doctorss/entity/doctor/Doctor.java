@@ -1,7 +1,6 @@
-package com.med.doctorss.doctor;
+package com.med.doctorss.entity.doctor;
 
-import com.med.doctorss.address.Address;
-import com.med.doctorss.address.DataAddress;
+import com.med.doctorss.entity.address.Address;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import lombok.*;
@@ -51,7 +50,6 @@ public class Doctor {
             this.address.updateInfo(dataupdate.address());
         }
     }
-
     public void delete() {
         this.active = false;
     }

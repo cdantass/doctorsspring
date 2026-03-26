@@ -1,6 +1,6 @@
 package com.med.doctorss.controller;
 
-import com.med.doctorss.doctor.*;
+import com.med.doctorss.entity.doctor.*;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -10,8 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/doctors")
@@ -54,5 +52,11 @@ public class DoctorController {
         doctor.delete();
 
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity detalhar(@PathVariable Long id){
+        var doctor = repository.getReferenceById(id);
+        return ResponseEntity.ok(new DataDetalheDoctor(doctor));
     }
 }

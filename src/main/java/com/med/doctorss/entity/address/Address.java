@@ -1,4 +1,4 @@
-package com.med.doctorss.address;
+package com.med.doctorss.entity.address;
 
 
 import jakarta.persistence.Embeddable;

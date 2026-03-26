@@ -1,4 +1,4 @@
-package com.med.doctorss.pacient;
+package com.med.doctorss.entity.pacient;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

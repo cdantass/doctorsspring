@@ -1,4 +1,4 @@
-package com.med.doctorss.doctor;
+package com.med.doctorss.entity.doctor;
 
 public record DataListDoctors(Long id, String nome, String email, String crm, Especialidade especialidade) {
 

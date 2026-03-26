@@ -1,4 +1,4 @@
-package com.med.doctorss.doctor;
+package com.med.doctorss.entity.doctor;
 
 public enum Especialidade {
     ORTOPEDIA,

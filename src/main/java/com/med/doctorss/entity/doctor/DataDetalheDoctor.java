@@ -1,6 +1,6 @@
-package com.med.doctorss.doctor;
+package com.med.doctorss.entity.doctor;
 
-import com.med.doctorss.address.Address;
+import com.med.doctorss.entity.address.Address;
 
 public record DataDetalheDoctor(Long id, String nome, String email, String crm, String telefone, Especialidade especialidade, Address address) {
 

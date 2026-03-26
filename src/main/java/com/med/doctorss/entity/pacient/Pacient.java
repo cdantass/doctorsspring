@@ -1,4 +1,4 @@
-package com.med.doctorss.pacient;
+package com.med.doctorss.entity.pacient;
 
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
