@@ -1,10 +1,11 @@
 package com.med.doctorss.entity.consulta.validacoes;
 
 import com.med.doctorss.entity.consulta.DadosAgendamentoConsulta;
+import org.springframework.stereotype.Component;
 
 import java.time.DayOfWeek;
-
-public class ValidadorHorarioFuncionamentoClinica {
+@Component
+public class ValidadorHorarioFuncionamentoClinica implements ValidadorAgendamentoDeConsulta {
 
     public void validar(DadosAgendamentoConsulta dados){
         var dataConsulta = dados.data();

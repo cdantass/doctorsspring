@@ -2,11 +2,13 @@ package com.med.doctorss.entity.consulta.validacoes;
 
 import com.med.doctorss.entity.consulta.ConsultaRepository;
 import com.med.doctorss.entity.consulta.DadosAgendamentoConsulta;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ValidadorMedicoComOutraConsulta {
+public class ValidadorMedicoComOutraConsulta implements ValidadorAgendamentoDeConsulta {
 
+    @Autowired
     private final ConsultaRepository repository;
 
     public ValidadorMedicoComOutraConsulta(ConsultaRepository repository) {
