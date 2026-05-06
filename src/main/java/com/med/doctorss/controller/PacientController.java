@@ -1,9 +1,7 @@
 package com.med.doctorss.controller;
 
-
 import com.med.doctorss.entity.pacient.*;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -16,45 +14,53 @@ import org.springframework.web.util.UriComponentsBuilder;
 @RequestMapping("/pacients")
 public class PacientController {
 
-    @Autowired
-    private PacientRepository repository;
+    private final PacientRepository repository;
+
+    public PacientController(PacientRepository repository) {
+        this.repository = repository;
+    }
 
     @PostMapping
     @Transactional
-    public ResponseEntity register(@RequestBody DataRegisterPacient data, UriComponentsBuilder uriComponentsBuilder) {
-        var pacient = new Pacient(data);
-        repository.save(new Pacient(data));
+    public ResponseEntity<DataDetalhePacient> register(
+            @RequestBody @Valid DataRegisterPacient data,
+            UriComponentsBuilder uriComponentsBuilder) {
+
+        var pacient = repository.save(new Pacient(data));
 
         var uri = uriComponentsBuilder.path("/pacients/{id}").buildAndExpand(pacient.getId()).toUri();
         return ResponseEntity.created(uri).body(new DataDetalhePacient(pacient));
     }
 
     @GetMapping
-    public ResponseEntity<Page<DataListPacient>> listar(@PageableDefault(size = 10, sort = {"nome"}) Pageable pageable){
+    public ResponseEntity<Page<DataListPacient>> listar(
+            @PageableDefault(size = 10, sort = {"nome"}) Pageable pageable) {
         var page = repository.findAllByActiveTrue(pageable).map(DataListPacient::new);
         return ResponseEntity.ok(page);
     }
 
     @PutMapping
     @Transactional
-    public ResponseEntity update(@RequestBody @Valid DataUpdatePacient dataUpdatePacient){
-        var pacient = repository.getReferenceById(dataUpdatePacient.id());
+    public ResponseEntity<DataDetalhePacient> update(@RequestBody @Valid DataUpdatePacient dataUpdatePacient) {
+        var pacient = repository.findById(dataUpdatePacient.id())
+                .orElseThrow(() -> new RuntimeException("Paciente não encontrado"));
         pacient.updateInfos(dataUpdatePacient);
-
         return ResponseEntity.ok(new DataDetalhePacient(pacient));
     }
 
     @DeleteMapping("/{id}")
     @Transactional
-    public ResponseEntity delete(@PathVariable Long id){
-        var pacient = repository.getReferenceById(id);
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        var pacient = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Paciente não encontrado"));
         pacient.delete();
-
         return ResponseEntity.noContent().build();
     }
+
     @GetMapping("/{id}")
-    public ResponseEntity detalhar(@PathVariable Long id){
-        var pacient = repository.getReferenceById(id);
+    public ResponseEntity<DataDetalhePacient> detalhar(@PathVariable Long id) {
+        var pacient = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Paciente não encontrado"));
         return ResponseEntity.ok(new DataDetalhePacient(pacient));
     }
 }

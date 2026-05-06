@@ -21,8 +21,7 @@ public class DoctorController {
     @PostMapping
     @Transactional
     public ResponseEntity register(@RequestBody DataRegisterDoc data, UriComponentsBuilder uriComponentsBuilder) {
-        var doctor = new Doctor(data);
-        repository.save(new Doctor(data));
+        var doctor = repository.save(new Doctor(data));
 
         var uri = uriComponentsBuilder.path("/doctors/{id}").buildAndExpand(doctor.getId()).toUri();
 
