@@ -4,6 +4,8 @@ import com.med.doctorss.entity.consulta.validacoes.ValidadorAgendamentoDeConsult
 import com.med.doctorss.entity.doctor.Doctor;
 import com.med.doctorss.entity.doctor.DoctorRepository;
 import com.med.doctorss.entity.pacient.PacientRepository;
+import com.med.doctorss.infra.exception.ValidacaoException;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,6 +18,8 @@ public class AgendaDeConsultas {
     private final PacientRepository pacientRepository;
     private final List<ValidadorAgendamentoDeConsulta> validadores;
 
+    private boolean active;
+
     public AgendaDeConsultas(ConsultaRepository consultaRepository,
                              DoctorRepository doctorRepository,
                              PacientRepository pacientRepository,
@@ -24,20 +28,18 @@ public class AgendaDeConsultas {
         this.doctorRepository = doctorRepository;
         this.pacientRepository = pacientRepository;
         this.validadores = validadores;
+        this.active = true;
     }
 
     public DadosDetalhamentoConsulta agendar(DadosAgendamentoConsulta dados) {
-        if (!pacientRepository.existsById(dados.idPacient())) {
-            throw new RuntimeException("ID do paciente não existe");
-        }
+        var pacient = pacientRepository.findById(dados.idPacient())
+                .orElseThrow(() -> new EntityNotFoundException("ID do paciente não existe"));
+
         if (dados.idDoctor() != null && !doctorRepository.existsById(dados.idDoctor())) {
-            throw new RuntimeException("ID do doctor não existe");
+            throw new EntityNotFoundException("ID do médico não existe");
         }
 
         validadores.forEach(v -> v.validar(dados));
-
-        var pacient = pacientRepository.findById(dados.idPacient())
-                .orElseThrow(() -> new RuntimeException("Paciente não encontrado"));
 
         var doctor = escolherMedico(dados);
         var consulta = new Consulta(null, doctor, pacient, dados.data());
@@ -49,12 +51,24 @@ public class AgendaDeConsultas {
     private Doctor escolherMedico(DadosAgendamentoConsulta dados) {
         if (dados.idDoctor() != null) {
             return doctorRepository.findById(dados.idDoctor())
-                    .orElseThrow(() -> new RuntimeException("Médico não encontrado"));
-        }
-        if (dados.especialidade() == null) {
-            throw new RuntimeException("Especialidade é obrigatória quando o médico não for escolhido!");
+                    .orElseThrow(() -> new EntityNotFoundException("Médico não encontrado"));
         }
 
-        return doctorRepository.escolherRandomDoctorLivreNaData(dados.especialidade(), dados.data());
+        if (dados.especialidade() == null) {
+            throw new ValidacaoException("Especialidade é obrigatória quando o médico não for escolhido!");
+        }
+
+        var doctor = doctorRepository.escolherRandomDoctorLivreNaData(
+                dados.especialidade().name(),
+                dados.data()
+        );        if (doctor == null) {
+            throw new ValidacaoException("Não há médico disponível nessa data para a especialidade informada");
+        }
+
+        return doctor;
+    }
+
+    public void cancelar(Long id) {
+        this.active = false;
     }
 }

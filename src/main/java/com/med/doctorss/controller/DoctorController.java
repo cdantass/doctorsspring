@@ -1,6 +1,7 @@
 package com.med.doctorss.controller;
 
 import com.med.doctorss.entity.doctor.*;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -28,18 +29,17 @@ public class DoctorController {
         return ResponseEntity.created(uri).body(new DataDetalheDoctor(doctor));
     }
 
-
     @GetMapping
-    public ResponseEntity<Page<DataListDoctors>> listar(@PageableDefault(size = 10, sort = {"nome"}) Pageable paginacao){
-
+    public ResponseEntity<Page<DataListDoctors>> listar(@PageableDefault(size = 10, sort = {"nome"}) Pageable paginacao) {
         var page = repository.findAllByActiveTrue(paginacao).map(DataListDoctors::new);
         return ResponseEntity.ok(page);
     }
 
     @PutMapping
     @Transactional
-    public ResponseEntity update(@RequestBody @Valid DataUpdateDoctor dataupdate){
-        var doctor = repository.getReferenceById(dataupdate.id());
+    public ResponseEntity update(@RequestBody @Valid DataUpdateDoctor dataupdate) {
+        var doctor = repository.findById(dataupdate.id())
+                .orElseThrow(() -> new EntityNotFoundException());
         doctor.updateInfo(dataupdate);
 
         return ResponseEntity.ok(new DataDetalheDoctor(doctor));
@@ -47,16 +47,18 @@ public class DoctorController {
 
     @DeleteMapping("/{id}")
     @Transactional
-    public ResponseEntity delete(@PathVariable Long id){
-        var doctor = repository.getReferenceById(id);
+    public ResponseEntity delete(@PathVariable Long id) {
+        var doctor = repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException());
         doctor.delete();
 
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity detalhar(@PathVariable Long id){
-        var doctor = repository.getReferenceById(id);
+    public ResponseEntity detalhar(@PathVariable Long id) {
+        var doctor = repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException());
         return ResponseEntity.ok(new DataDetalheDoctor(doctor));
     }
 }

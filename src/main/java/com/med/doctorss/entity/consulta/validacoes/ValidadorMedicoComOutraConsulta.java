@@ -2,6 +2,7 @@ package com.med.doctorss.entity.consulta.validacoes;
 
 import com.med.doctorss.entity.consulta.ConsultaRepository;
 import com.med.doctorss.entity.consulta.DadosAgendamentoConsulta;
+import com.med.doctorss.infra.exception.ValidacaoException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -23,7 +24,7 @@ public class ValidadorMedicoComOutraConsulta implements ValidadorAgendamentoDeCo
                 repository.existsByDoctorIdAndData(dados.idDoctor(), dados.data());
 
         if (medicoPossuiOutraConsultaNoMesmoHorario) {
-            throw new IllegalStateException("Médico já possui outra consulta no mesmo horário");
+            throw new ValidacaoException("Médico já possui outra consulta no mesmo horário");
         }
     }
 }

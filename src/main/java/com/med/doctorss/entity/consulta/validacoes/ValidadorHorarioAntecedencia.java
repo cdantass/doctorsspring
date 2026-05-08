@@ -1,6 +1,7 @@
 package com.med.doctorss.entity.consulta.validacoes;
 
 import com.med.doctorss.entity.consulta.DadosAgendamentoConsulta;
+import com.med.doctorss.infra.exception.ValidacaoException;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
@@ -14,7 +15,7 @@ public class ValidadorHorarioAntecedencia implements ValidadorAgendamentoDeConsu
         var diferencaEmMinutos = Duration.between(agora, dataConsulta).toMinutes();
 
         if (diferencaEmMinutos < 30){
-            throw new RuntimeException("Consulta deve ser agendada com 30 minutos de antecedência");
+            throw new ValidacaoException("Consulta deve ser agendada com 30 minutos de antecedência");
         }
     }
 }
