@@ -1,6 +1,7 @@
 package com.med.doctorss.controller;
 
 import com.med.doctorss.entity.pacient.*;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,6 +13,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
 @RequestMapping("/pacients")
+@SecurityRequirement(name = "bearer-key")
 public class PacientController {
 
     private final PacientRepository repository;

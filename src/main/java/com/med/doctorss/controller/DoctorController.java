@@ -1,6 +1,7 @@
 package com.med.doctorss.controller;
 
 import com.med.doctorss.entity.doctor.*;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
 @RequestMapping("/doctors")
+@SecurityRequirement(name = "bearer-key")
 public class DoctorController {
 
     @Autowired

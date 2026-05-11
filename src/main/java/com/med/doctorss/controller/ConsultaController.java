@@ -4,6 +4,7 @@ import com.med.doctorss.entity.consulta.AgendaDeConsultas;
 import com.med.doctorss.entity.consulta.ConsultaRepository;
 import com.med.doctorss.entity.consulta.DadosAgendamentoConsulta;
 import com.med.doctorss.infra.exception.ValidacaoException;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("consultas")
+@SecurityRequirement(name = "bearer-key")
 public class ConsultaController {
 
     @Autowired
